@@ -23,8 +23,6 @@ spec:
         targetRevision: HEAD
         helm:
           releaseName: "{{ name }}"
-          valueFiles:
-            - "../apps/{{ name }}.yaml"
       syncPolicy:
         automated:
           prune: true
