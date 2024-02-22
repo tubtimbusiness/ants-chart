@@ -72,7 +72,8 @@ app:
     strategy: RollingUpdate
     maxUnavailable: 25%
     maxSurge: 1
-
+  serviceAccountName: dotnet-demo
+  
   startupProbe: {}
   livenessProbe: {}
   readinessProbe: {}
