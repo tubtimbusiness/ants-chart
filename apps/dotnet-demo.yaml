@@ -84,10 +84,6 @@ app:
 sideCars: []
 
 initContainers: []
-
-  env: []
-  envFrom: []
-
 podMonitor:
   enabled: false
   podMetricsEndpoints: []
