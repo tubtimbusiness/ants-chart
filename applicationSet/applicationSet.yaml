@@ -13,24 +13,25 @@ spec:
     metadata:
       name: '{{ name }}'
     spec:
-      project: default
+      project: development
       destination:
-        namespace: "{{ namespace }}"
+        namespace: '{{ namespace }}'
         server: 'https://kubernetes.default.svc'
       source:
         repoURL: 'https://github.com/tubtimbusiness/ants-chart.git'
         path: helm
-        targetRevision: HEAD
+        targetRevision: master
         helm:
-          releaseName: "{{ name }}"
+          releaseName: '{{ name }}'
+          valueFiles:
+            - '../apps/{{ name }}.yaml'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-        syncOptions:    
-        - Validate=false 
-        - CreateNamespace=true
-        - PrunePropagationPolicy=foreground 
-        - PruneLast=true 
-        - RespectIgnoreDifferences=true 
-      
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+          - RespectIgnoreDifferences=true
