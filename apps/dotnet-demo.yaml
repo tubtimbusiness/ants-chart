@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: tubtim/ants-demo
   pullPolicy: IfNotPresent
-  tag: 10.1
+  tag: development-34a478e5
 
 imagePullSecrets: 
   - name: docker-hub
