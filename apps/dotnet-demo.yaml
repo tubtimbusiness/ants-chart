@@ -10,7 +10,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  create: false
+  create: true
   annotations: {}
   name: ""
 
@@ -30,7 +30,7 @@ service:
       name: http
       
 ingress:
-  enabled: false
+  enabled: true
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -72,8 +72,7 @@ app:
     strategy: RollingUpdate
     maxUnavailable: 25%
     maxSurge: 1
-  serviceAccountName: dotnet-demo
-  
+
   startupProbe: {}
   livenessProbe: {}
   readinessProbe: {}
@@ -85,6 +84,7 @@ app:
 sideCars: []
 
 initContainers: []
+
 podMonitor:
   enabled: false
   podMetricsEndpoints: []
@@ -97,9 +97,13 @@ resources:
   limits:
     memory: "512Mi"
     cpu: "1"
-      
-  fallback: {}
-  advanced: {}
+    
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 10
+  targetMemoryUtilizationPercentage: 10
 
 nodeSelector: {}
 
