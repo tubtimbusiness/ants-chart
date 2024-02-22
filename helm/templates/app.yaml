@@ -58,8 +58,6 @@ spec:
               protocol: TCP
             {{- end }}
           volumeMounts:
-            - mountPath: /shared
-              name: shared
           {{- if .Values.app.additionalVolumeMounts }}
           {{- toYaml .Values.app.additionalVolumeMounts | nindent 12 }}
           {{- end }}
