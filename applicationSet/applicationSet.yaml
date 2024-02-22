@@ -13,7 +13,7 @@ spec:
     metadata:
       name: '{{ name }}'
     spec:
-      project: development
+      project: default
       destination:
         namespace: '{{ namespace }}'
         server: 'https://kubernetes.default.svc'
