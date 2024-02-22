@@ -1,0 +1,20 @@
+apiVersion: v2
+name: app
+description: A Helm chart for a simple app deployment
+type: application
+version: 0.1.2
+
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: support for startupProbe
+
+maintainers:
+  - name: Vadim Gedz
+    email: vadims@linux-tech.io
+    url: https://github.com/shini4i
+
+dependencies:
+#  - name: common
+#    version: v0.0.1
+#    repository: https://shini4i.github.io/charts

@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: {{ .Values.app.kind }}
+metadata:
+  name: {{ include "app.fullname" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  {{- if and (not .Values.autoscaling.enabled) (not .Values.keda.enabled) }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  {{- if eq .Values.app.kind "Deployment" }}
+  strategy:
+    type: {{ .Values.app.deployment.strategy }}
+    {{- if eq .Values.app.deployment.strategy "RollingUpdate" }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.app.deployment.maxUnavailable }}
+      maxSurge: {{ .Values.app.deployment.maxSurge }}
+    {{- end }}
+  {{- else if eq .Values.app.kind "StatefulSet" }}
+  serviceName: {{ include "app.fullname" . }}
+  updateStrategy:
+    type: {{ .Values.app.statefulSet.strategy }}
+  {{- end }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "app.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.initContainers }}
+      initContainers:
+        {{ toYaml .Values.initContainers | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .containerPort }}
+              protocol: TCP
+            {{- end }}
+          volumeMounts:
+            - mountPath: /shared
+              name: shared
+          {{- if .Values.app.additionalVolumeMounts }}
+          {{- toYaml .Values.app.additionalVolumeMounts | nindent 12 }}
+          {{- end }}
+          {{- if and (eq .Values.app.kind "StatefulSet") .Values.app.statefulSet.persistence.enabled }}
+          {{- range .Values.app.statefulSet.persistence.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.app.lifecycle }}
+          lifecycle:
+            {{- toYaml .Values.app.lifecycle | nindent 12 }}
+          {{- end }}
+          {{- if .Values.app.env }}
+          env:
+          {{- toYaml .Values.app.env | nindent 10 }}
+          {{- end }}
+          {{- if .Values.app.envFrom }}
+          envFrom:
+          {{- toYaml .Values.app.envFrom | nindent 10 }}
+          {{- end }}
+          {{- if .Values.app.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.app.startupProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.app.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.app.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.app.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.app.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.sideCars }}
+        {{- toYaml .Values.sideCars | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: shared
+          emptyDir: {}
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if and (eq .Values.app.kind "StatefulSet") .Values.app.statefulSet.persistence.enabled }}
+  volumeClaimTemplates:
+    {{- range .Values.app.statefulSet.persistence.volumes }}
+    - metadata:
+        name: {{ .name }}
+      spec:
+        accessModes:
+          {{- range .accessModes }}
+          - {{ . }}
+          {{- end }}
+        resources:
+          requests:
+            storage: {{ .size }}
+        {{- if .storageClassName }}
+        storageClassName: {{ .storageClassName }}
+        {{- end }}
+    {{- end }}
+  {{- end }}

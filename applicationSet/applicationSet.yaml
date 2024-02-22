@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ants-demo
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: dotnet-demo
+            namespace: development
+  template:
+    metadata:
+      name: '{{ name }}'
+    spec:
+      project: default
+      destination:
+        namespace: "{{ namespace }}"
+        server: 'https://kubernetes.default.svc'
+      source:
+        repoURL: 'https://github.com/NzNewWorld/argocd.git'
+        path: helm
+        targetRevision: HEAD
+        helm:
+          releaseName: "{{ name }}"
+          valueFiles:
+            - "../apps/{{ name }}.yaml"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:    
+        - Validate=false 
+        - CreateNamespace=true
+        - PrunePropagationPolicy=foreground 
+        - PruneLast=true 
+        - RespectIgnoreDifferences=true 
+      
