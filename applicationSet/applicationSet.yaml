@@ -8,7 +8,7 @@ spec:
     - list:
         elements:
           - name: dotnet-demo
-            namespace: development
+            namespace: argocd
   template:
     metadata:
       name: '{{ name }}'
