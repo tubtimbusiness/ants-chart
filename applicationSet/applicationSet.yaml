@@ -18,7 +18,7 @@ spec:
         namespace: "{{ namespace }}"
         server: 'https://kubernetes.default.svc'
       source:
-        repoURL: 'https://github.com/NzNewWorld/argocd.git'
+        repoURL: 'https://github.com/tubtimbusiness/ants-chart.git'
         path: helm
         targetRevision: HEAD
         helm:
