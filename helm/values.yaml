@@ -88,10 +88,6 @@ app:
 
 sideCars: []
 
-volumes:
-  - name: secret-mount
-    secret:
-      secretName:  DO-DevOps-secret
 
 initContainers: []
 
