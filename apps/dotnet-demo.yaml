@@ -24,10 +24,10 @@ podSecurityContext: {}
 securityContext: {}
 
 service:
-  type: ClusterIP
+  type: NodePort
   ports:
-    - port: 80
-      containerPort: 80
+    - port: 8080
+      containerPort: 8080
       name: http
       
 ingress:
