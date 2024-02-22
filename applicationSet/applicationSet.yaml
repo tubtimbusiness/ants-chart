@@ -15,7 +15,7 @@ spec:
     spec:
       project: default
       destination:
-        namespace: development
+        namespace: "{{ namespace }}"
         server: 'https://kubernetes.default.svc'
       source:
         repoURL: 'https://github.com/tubtimbusiness/ants-chart.git'
