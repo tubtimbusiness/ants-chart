@@ -35,7 +35,7 @@ ingress:
   className: nginx
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-  exposedPort: 80
+  exposedPort: 8080
   hosts:
     - host: chart-example.local
       paths:
@@ -51,7 +51,7 @@ ingressRoute:
   entryPoint: websecure
   host: example.com
   tlsSecret: example-com-tls
-  exposedPort: 80
+  exposedPort: 8080
   annotations: {}
   labels: {}
 
