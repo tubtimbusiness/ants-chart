@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: ants-demo
-  namespace: development
+  namespace: argocd
 spec:
   generators:
     - list:
